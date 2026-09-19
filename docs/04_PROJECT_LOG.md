@@ -243,7 +243,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T16 | B | Household bookings | ⬜ | | |
 | T17 | A | Admin endpoints | ⬜ | | |
 | T18 | B | Admin dashboard | ⬜ | | **core complete here** |
-| T19 | C+A | Gemini LLM | ✅ | 2026-09-19 | `@google/generative-ai@0.21.0` |
+| T19 | C+A | Gemini LLM | ✅ | 6ebc930 | `@google/generative-ai@0.21.0` |
 | — | | **✂ CUT LINE** | | | below = optional |
 | T20 | B | Voice input | ⬜ | | |
 | T21 | C | Deploy | ⬜ | | |
