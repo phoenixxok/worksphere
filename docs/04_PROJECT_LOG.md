@@ -231,7 +231,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T04 | A | Express + health | ✅ | 1044b82 | |
 | T05 | B | Vite/React/Tailwind skeleton | ✅ | bb4922e | **thin slice done here** |
 | T06 | A | JWT auth | ✅ | b2c57ca | |
-| T07 | B | Login + role routing | ⬜ | | |
+| T07 | B | Login + role routing |  ✅ | bf3803e | |
 | T08 | A | Request intake + fallback NLP | ✅ | dbecafc | |
 | T09 | B | Household intake screen | ⬜ | | |
 | T10 | A | Fair-matching engine | ✅ | 58d312c | ⚠ highest value |
@@ -286,6 +286,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 20:54][T14][A] Lifecycle complete. POST /:id/accept, /:id/verify-start-otp, /:id/verify-completion-otp, /:id/cancel, GET /:id/payment. Start OTP -> in_progress + issues completion OTP. Completion OTP -> ONE transaction: booking completed, payment settled (75/15/10), worker jobs_completed_total +1, jobs_completed_this_cycle +1, last_assigned_at=NOW(). Max 5 attempts per OTP, constant-time compare. Cancel allowed from pending/accepted only and returns the request to 'matched'. VERIFIED: payment parts sum exactly to total; rotation counter feeds back into the next match ranking.
 
 [2026-09-19 21:09][T19][C] Gemini gemini-2.0-flash wired into src/services/nlp.js behind the existing extractServiceDetails() interface — no other file changed. @google/generative-ai@0.21.0 installed. JSON-only system prompt, responseMimeType application/json, temperature 0.1, 8s hard timeout, output validated against the 6 skill codes / 4 urgency values / 3 languages. ANY failure (disabled, missing key, timeout, bad JSON, invalid value) falls back to keywords with source='fallback'. VERIFIED: LLM_ENABLED=false and an invalid key both still return fallback result — intake cannot fail because of NLP. Set GEMINI_API_KEY and LLM_ENABLED=true in .env to activate the LLM path.
+
+[2026-09-19 21:20][T07][B] Login screen live at /login with 4 one-tap demo accounts. Session (token + user) in localStorage under worksphere_token / worksphere_user. Roles route to /household, /worker, /admin (placeholders for now). RequireRole and AppHeader components created. Sign-out clears the session. · commit bf3803e
+
 
 
 ---
