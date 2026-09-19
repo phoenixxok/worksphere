@@ -239,7 +239,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T12 | A | Booking + start OTP | ✅ | a345924 | |
 | T13 | B | Booking form | ✅ | 6a5612c | |
 | T14 | A | Lifecycle + settlement | ✅ | dd85f0b | ⚠ critical transaction |
-| T15 | B | Worker screens | ⬜ | | |
+| T15 | B | Worker screens | ✅ | eedb659 | |
 | T16 | B | Household bookings | ⬜ | | |
 | T17 | A | Admin endpoints | ✅ | 6e67fdc | |
 | T18 | B | Admin dashboard | ⬜ | | **core complete here** |
@@ -296,6 +296,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 23:30][T11][B] /household/requests/:id/matches live. WorkerCard shows rank, distance, rating, jobs-this-cycle badge, and an expandable "Why this rank?" panel with three weighted ScoreBars. Empty state handled. Selecting a worker routes to /household/requests/:id/book carrying the candidate in router state. DEMO NOTE: Suresh ranks 3rd despite being nearest — this is the fairness moment. · commit 8602640
 
 [2026-09-19 23:59][T13][B] /household/requests/:id/book live. Slot picker (4 options), amount picker (300/500/800/1200), live 75/15/10 split preview matching backend floor logic, POST /api/bookings, then confirmation + OtpDisplay showing start_otp with the visible "prototype: shown on screen" label.
+
+[2026-09-20 00:10][T15][B] /worker live. Lists jobs from GET /bookings/mine, status-driven UI: pending -> Accept, accepted -> start OTP input, in_progress -> completion OTP input, completed -> payout box. OtpInput component (6 digits, numeric only, inline error with attempts remaining). CONFIRMED: no OTP value is rendered anywhere on the worker screen.
+
 
 
 
