@@ -240,7 +240,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T13 | B | Booking form | ✅ | 6a5612c | |
 | T14 | A | Lifecycle + settlement | ✅ | dd85f0b | ⚠ critical transaction |
 | T15 | B | Worker screens | ✅ | eedb659 | |
-| T16 | B | Household bookings | ⬜ | | |
+| T16 | B | Household bookings | ✅ | 087f2c9 | |
 | T17 | A | Admin endpoints | ✅ | 6e67fdc | |
 | T18 | B | Admin dashboard | ⬜ | | **core complete here** |
 | T19 | C+A | Gemini LLM | ✅ | 6ebc930 | `@google/generative-ai@0.21.0` |
@@ -298,6 +298,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 23:59][T13][B] /household/requests/:id/book live. Slot picker (4 options), amount picker (300/500/800/1200), live 75/15/10 split preview matching backend floor logic, POST /api/bookings, then confirmation + OtpDisplay showing start_otp with the visible "prototype: shown on screen" label.
 
 [2026-09-20 00:10][T15][B] /worker live. Lists jobs from GET /bookings/mine, status-driven UI: pending -> Accept, accepted -> start OTP input, in_progress -> completion OTP input, completed -> payout box. OtpInput component (6 digits, numeric only, inline error with attempts remaining). CONFIRMED: no OTP value is rendered anywhere on the worker screen.
+
+[2026-09-20 00:24][T16][B] /household/bookings live. 5-second polling of GET /bookings/mine. Status-driven OTP display: start OTP while pending/accepted, completion OTP while in_progress, SplitCard (stacked bar + 3 rows + total) once completed via GET /bookings/:id/payment. Cancel button on pending/accepted only. Two-window demo flow (normal + incognito) now works end to end.
+
 
 
 
