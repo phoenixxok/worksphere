@@ -227,7 +227,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 |---|---|---|---|---|---|
 | T01 | A | Repo skeleton and Git | ✅ | 6b4c49f | |
 | T02 | A | Neon DB + schema | ✅ | 90e55bd | |
-| T03 | C | Seed data | ✅ | | |
+| T03 | C | Seed data | ✅ | 8f81029 | |
 | T04 | A | Express + health | ⬜ | | |
 | T05 | B | Vite/React/Tailwind skeleton | ⬜ | | **thin slice done here** |
 | T06 | A | JWT auth | ⬜ | | |
