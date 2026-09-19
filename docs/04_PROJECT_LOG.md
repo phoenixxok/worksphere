@@ -233,7 +233,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T06 | A | JWT auth | ✅ | b2c57ca | |
 | T07 | B | Login + role routing |  ✅ | bf3803e | |
 | T08 | A | Request intake + fallback NLP | ✅ | dbecafc | |
-| T09 | B | Household intake screen | ⬜ | | |
+| T09 | B | Household intake screen | ✅ | d7c1db8 | |
 | T10 | A | Fair-matching engine | ✅ | 58d312c | ⚠ highest value |
 | T11 | B | Matches + score breakdown | ⬜ | | |
 | T12 | A | Booking + start OTP | ✅ | a345924 | |
@@ -290,6 +290,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 21:20][T07][B] Login screen live at /login with 4 one-tap demo accounts. Session (token + user) in localStorage under worksphere_token / worksphere_user. Roles route to /household, /worker, /admin (placeholders for now). RequireRole and AppHeader components created. Sign-out clears the session. · commit bf3803e
 
 [2026-09-19 21:44][T17][A] GET /api/admin/stats, /api/admin/rotation-queue, /api/admin/bookings live, all admin-only via router-level requireRole('admin'). Stats: request/booking totals, bookings_by_status (all 5 keys always present), GMV and the three settled buckets, active_workers, demand_by_skill. Rotation queue ordered jobs_this_cycle ASC then last_assigned_at ASC NULLS FIRST. Admin never sees OTPs. VERIFIED: bucket sums equal GMV; completing a job moves that worker down the queue.
+
+[2026-09-19 22:49][T09][B] /household screen live: free-text intake in en/hi/gu with 3 example chips, posts to POST /api/requests and renders RequestResultCard (service, issue, urgency badge, detected language, nlp source + confidence). RequireRole now wired on all household/worker/admin routes. Routes added: /household/requests/:id/matches and /household/bookings (placeholders).
+
 
 
 
