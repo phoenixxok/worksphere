@@ -62,4 +62,9 @@ export const api = {
   login: (phone, password) =>
     apiRequest('/auth/login', { method: 'POST', body: { phone, password } }),
   me: () => apiRequest('/auth/me'),
+  skills: () => apiRequest('/skills'),
+  createRequest: (raw_text, input_mode = 'text') =>
+    apiRequest('/requests', { method: 'POST', body: { raw_text, input_mode } }),
+  myRequests: () => apiRequest('/requests/mine'),
+  getRequest: (id) => apiRequest(`/requests/${id}`),
 };
