@@ -232,7 +232,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T05 | B | Vite/React/Tailwind skeleton | ✅ | bb4922e | **thin slice done here** |
 | T06 | A | JWT auth | ✅ | b2c57ca | |
 | T07 | B | Login + role routing | ⬜ | | |
-| T08 | A | Request intake + fallback NLP | ⬜ | | |
+| T08 | A | Request intake + fallback NLP | ✅ | dbecafc | |
 | T09 | B | Household intake screen | ⬜ | | |
 | T10 | A | Fair-matching engine | ⬜ | | ⚠ highest value |
 | T11 | B | Matches + score breakdown | ⬜ | | |
@@ -277,6 +277,7 @@ Newest at the bottom. Append after every completed task — never edit an old en
 
 [2026-09-19 18:13][T06][A] Auth live. POST /api/auth/register, POST /api/auth/login, GET /api/auth/me. JWT HS256, 24h expiry, payload {user_id, role}. bcrypt 10 rounds. Middleware requireAuth + requireRole in src/middleware/auth.js. Registering a worker auto-creates worker_profiles.
 
+[2026-09-19 18:27][T08][A] GET /api/skills, POST /api/requests, GET /api/requests/mine, GET /api/requests/:id live. src/services/nlp.js implements the keyword fallback (en/hi/gu) behind extractServiceDetails(); nlp_source='fallback', confidence 0.40. LLM branch still to be added in T19. Route order: /mine declared before /:id.
 
 ---
 
