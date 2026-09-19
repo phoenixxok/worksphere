@@ -7,6 +7,7 @@ import HouseholdHome from './pages/HouseholdHome';
 import MatchesPage from './pages/MatchesPage';
 import BookingFormPage from './pages/BookingFormPage';
 import WorkerHome from './pages/WorkerHome';
+import HouseholdBookings from './pages/HouseholdBookings';
 
 function Placeholder({ name }) {
   return <div className="p-4 text-slate-500">{name} — coming in a later task.</div>;
@@ -29,7 +30,7 @@ export default function App() {
             <Route path="/household/requests/:id/book" element={
               <RequireRole role="household"><BookingFormPage /></RequireRole>} />
             <Route path="/household/bookings" element={
-              <RequireRole role="household"><Placeholder name="My bookings" /></RequireRole>} />
+              <RequireRole role="household"><HouseholdBookings /></RequireRole>} />
 
             <Route path="/worker" element={
               <RequireRole role="worker"><WorkerHome /></RequireRole>} />
