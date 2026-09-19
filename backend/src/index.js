@@ -40,8 +40,10 @@ app.use('/api/auth', authRoutes);
 
 const skillsRoutes = require('./routes/skills');
 const requestRoutes = require('./routes/requests');
+const bookingRoutes = require('./routes/bookings');
 app.use('/api/skills', skillsRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // 404 for any unknown /api route, in the standard error shape from 01 section 6.
 app.use('/api', (_req, res) => {
