@@ -5,6 +5,7 @@ import HealthPage from './pages/HealthPage';
 import LoginPage from './pages/LoginPage';
 import HouseholdHome from './pages/HouseholdHome';
 import MatchesPage from './pages/MatchesPage';
+import BookingFormPage from './pages/BookingFormPage';
 
 function Placeholder({ name }) {
   return <div className="p-4 text-slate-500">{name} — coming in a later task.</div>;
@@ -25,7 +26,7 @@ export default function App() {
             <Route path="/household/requests/:id/matches" element={
               <RequireRole role="household"><MatchesPage /></RequireRole>} />
             <Route path="/household/requests/:id/book" element={
-              <RequireRole role="household"><Placeholder name="Booking" /></RequireRole>} />
+              <RequireRole role="household"><BookingFormPage /></RequireRole>} />
             <Route path="/household/bookings" element={
               <RequireRole role="household"><Placeholder name="My bookings" /></RequireRole>} />
 

@@ -68,4 +68,11 @@ export const api = {
   myRequests: () => apiRequest('/requests/mine'),
   getRequest: (id) => apiRequest(`/requests/${id}`),
   getMatches: (requestId) => apiRequest(`/requests/${requestId}/matches`),
+  createBooking: (service_request_id, worker_user_id, scheduled_slot, quoted_amount_inr) =>
+    apiRequest('/bookings', {
+      method: 'POST',
+      body: { service_request_id, worker_user_id, scheduled_slot, quoted_amount_inr },
+    }),
+  myBookings: () => apiRequest('/bookings/mine'),
+  getBooking: (id) => apiRequest(`/bookings/${id}`),
 };
