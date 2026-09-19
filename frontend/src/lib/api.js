@@ -75,4 +75,11 @@ export const api = {
     }),
   myBookings: () => apiRequest('/bookings/mine'),
   getBooking: (id) => apiRequest(`/bookings/${id}`),
+  acceptBooking: (id) => apiRequest(`/bookings/${id}/accept`, { method: 'POST' }),
+  verifyStartOtp: (id, otp) =>
+    apiRequest(`/bookings/${id}/verify-start-otp`, { method: 'POST', body: { otp } }),
+  verifyCompletionOtp: (id, otp) =>
+    apiRequest(`/bookings/${id}/verify-completion-otp`, { method: 'POST', body: { otp } }),
+  cancelBooking: (id) => apiRequest(`/bookings/${id}/cancel`, { method: 'POST' }),
+  getPayment: (id) => apiRequest(`/bookings/${id}/payment`),
 };

@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import HouseholdHome from './pages/HouseholdHome';
 import MatchesPage from './pages/MatchesPage';
 import BookingFormPage from './pages/BookingFormPage';
+import WorkerHome from './pages/WorkerHome';
 
 function Placeholder({ name }) {
   return <div className="p-4 text-slate-500">{name} — coming in a later task.</div>;
@@ -31,7 +32,7 @@ export default function App() {
               <RequireRole role="household"><Placeholder name="My bookings" /></RequireRole>} />
 
             <Route path="/worker" element={
-              <RequireRole role="worker"><Placeholder name="Worker home" /></RequireRole>} />
+              <RequireRole role="worker"><WorkerHome /></RequireRole>} />
             <Route path="/admin" element={
               <RequireRole role="admin"><Placeholder name="Admin dashboard" /></RequireRole>} />
 
