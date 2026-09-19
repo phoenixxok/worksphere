@@ -129,3 +129,6 @@ CREATE INDEX idx_bookings_worker    ON bookings(worker_user_id);
 CREATE INDEX idx_bookings_household ON bookings(household_user_id);
 CREATE INDEX idx_bookings_status    ON bookings(status);
 CREATE INDEX idx_candidates_request ON match_candidates(service_request_id);
+CREATE UNIQUE INDEX idx_bookings_no_duplicate_active
+  ON bookings (household_user_id, worker_user_id, scheduled_slot)
+  WHERE status IN ('pending','accepted','in_progress');

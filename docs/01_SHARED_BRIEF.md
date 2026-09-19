@@ -328,6 +328,7 @@ When the completion OTP is verified, in ONE database transaction:
 | `INVALID_OTP` | 400 | wrong OTP |
 | `OTP_ATTEMPTS_EXCEEDED` | 429 | more than 5 attempts |
 | `SERVER_ERROR` | 500 | anything unhandled |
+| `DUPLICATE_BOOKING` | 409 | household already has an active booking with this worker for this slot |
 
 ---
 
