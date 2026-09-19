@@ -82,4 +82,7 @@ export const api = {
     apiRequest(`/bookings/${id}/verify-completion-otp`, { method: 'POST', body: { otp } }),
   cancelBooking: (id) => apiRequest(`/bookings/${id}/cancel`, { method: 'POST' }),
   getPayment: (id) => apiRequest(`/bookings/${id}/payment`),
+  adminStats: () => apiRequest('/admin/stats'),
+  adminRotationQueue: () => apiRequest('/admin/rotation-queue'),
+  adminBookings: () => apiRequest('/admin/bookings'),
 };
