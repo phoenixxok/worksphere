@@ -225,7 +225,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 
 | ID | Owner | Title | Status | Commit | Notes |
 |---|---|---|---|---|---|
-| T01 | A | Repo skeleton and Git | ⬜ | | |
+| T01 | A | Repo skeleton and Git | ✅ | 6b4c49f | |
 | T02 | A | Neon DB + schema | ⬜ | | |
 | T03 | C | Seed data | ⬜ | | |
 | T04 | A | Express + health | ⬜ | | |
@@ -265,7 +265,8 @@ Newest at the bottom. Append after every completed task — never edit an old en
 ---
 <!-- APPEND BELOW THIS LINE -->
 
-[<DATE>][T00][ALL] Planning complete. Files 00-05 received. Stack simplification agreed (see section 2.1). Starting T01.
+[2026-09-19 15:58][T01][A] Repo created and pushed. Folders: backend/, frontend/, docs/. .gitignore excludes node_modules and .env. Repo URL shared with B and C.
+
 
 
 ---
