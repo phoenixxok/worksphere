@@ -3,7 +3,7 @@
 # THE BACKUP BRAIN. If we switch AI tools, lose a chat, or start from nothing,
 # this file plus 00_EXECUTOR_RULES.md and 01_SHARED_BRIEF.md is enough to continue.
 # Owner: C keeps this file. Everyone appends their own entries.
-# Last updated: <DATE, TIME> by <NAME>
+# Last updated: 2026-09-19 23:30 by B
 
 ---
 
@@ -235,7 +235,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T08 | A | Request intake + fallback NLP | ✅ | dbecafc | |
 | T09 | B | Household intake screen | ✅ | d7c1db8 | |
 | T10 | A | Fair-matching engine | ✅ | 58d312c | ⚠ highest value |
-| T11 | B | Matches + score breakdown | ⬜ | | |
+| T11 | B | Matches + score breakdown | ✅ | 8602640 | |
 | T12 | A | Booking + start OTP | ✅ | a345924 | |
 | T13 | B | Booking form | ⬜ | | |
 | T14 | A | Lifecycle + settlement | ✅ | dd85f0b | ⚠ critical transaction |
@@ -293,8 +293,7 @@ Newest at the bottom. Append after every completed task — never edit an old en
 
 [2026-09-19 22:49][T09][B] /household screen live: free-text intake in en/hi/gu with 3 example chips, posts to POST /api/requests and renders RequestResultCard (service, issue, urgency badge, detected language, nlp source + confidence). RequireRole now wired on all household/worker/admin routes. Routes added: /household/requests/:id/matches and /household/bookings (placeholders).
 
-
-
+[2026-09-19 23:30][T11][B] /household/requests/:id/matches live. WorkerCard shows rank, distance, rating, jobs-this-cycle badge, and an expandable "Why this rank?" panel with three weighted ScoreBars. Empty state handled. Selecting a worker routes to /household/requests/:id/book carrying the candidate in router state. DEMO NOTE: Suresh ranks 3rd despite being nearest — this is the fairness moment. · commit 8602640
 
 
 ---
