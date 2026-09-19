@@ -1,20 +1,25 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppHeader from './components/AppHeader';
 import HealthPage from './pages/HealthPage';
+import LoginPage from './pages/LoginPage';
+
+function Placeholder({ name }) {
+  return <div className="p-4 text-slate-500">{name} — coming in a later task.</div>;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Mobile-width shell: the prototype is a responsive web app that
-          mimics the phone layout of the production React Native client. */}
       <div className="min-h-screen flex justify-center">
         <div className="w-full max-w-md bg-slate-50 min-h-screen shadow-xl">
-          <header className="bg-slate-900 text-white px-4 py-3">
-            <h1 className="font-bold tracking-wide">WorkSphere</h1>
-            <p className="text-xs text-slate-300">Cooperative Gig Services</p>
-          </header>
+          <AppHeader />
           <Routes>
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/health" element={<HealthPage />} />
-            <Route path="*" element={<Navigate to="/health" replace />} />
+            <Route path="/household" element={<Placeholder name="Household home" />} />
+            <Route path="/worker" element={<Placeholder name="Worker home" />} />
+            <Route path="/admin" element={<Placeholder name="Admin dashboard" />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
       </div>

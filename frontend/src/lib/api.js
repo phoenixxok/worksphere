@@ -59,4 +59,7 @@ export async function apiRequest(path, { method = 'GET', body } = {}) {
 
 export const api = {
   health: () => apiRequest('/health'),
+  login: (phone, password) =>
+    apiRequest('/auth/login', { method: 'POST', body: { phone, password } }),
+  me: () => apiRequest('/auth/me'),
 };
