@@ -226,7 +226,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | ID | Owner | Title | Status | Commit | Notes |
 |---|---|---|---|---|---|
 | T01 | A | Repo skeleton and Git | ✅ | 6b4c49f | |
-| T02 | A | Neon DB + schema | ⬜ | | |
+| T02 | A | Neon DB + schema | ✅ | | |
 | T03 | C | Seed data | ⬜ | | |
 | T04 | A | Express + health | ⬜ | | |
 | T05 | B | Vite/React/Tailwind skeleton | ⬜ | | **thin slice done here** |
@@ -266,6 +266,8 @@ Newest at the bottom. Append after every completed task — never edit an old en
 <!-- APPEND BELOW THIS LINE -->
 
 [2026-09-19 15:58][T01][A] Repo created and pushed. Folders: backend/, frontend/, docs/. .gitignore excludes node_modules and .env. Repo URL shared with B and C.
+
+[2026-09-19 16:51][T02][A] Neon Postgres project 'worksphere' created. schema.sql applied, 8 tables live. backend/.env created locally (not committed), .env.example committed. LLM_ENABLED=false for now.
 
 
 
