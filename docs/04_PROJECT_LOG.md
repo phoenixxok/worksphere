@@ -243,7 +243,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T16 | B | Household bookings | ⬜ | | |
 | T17 | A | Admin endpoints | ⬜ | | |
 | T18 | B | Admin dashboard | ⬜ | | **core complete here** |
-| T19 | C+A | Gemini LLM | ⬜ | | |
+| T19 | C+A | Gemini LLM | ✅ | 2026-09-19 | `@google/generative-ai@0.21.0` |
 | — | | **✂ CUT LINE** | | | below = optional |
 | T20 | B | Voice input | ⬜ | | |
 | T21 | C | Deploy | ⬜ | | |
@@ -282,6 +282,8 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 19:32][T10][A] GET /api/requests/:id/matches live. src/services/matching.js: Haversine distance, 15km cap, eligibility filter (role=worker, verified, available, has skill), scores proximity 0.45 / skill 0.30 / rotation 0.25, tie-break last_assigned_at then id, top 5. Rankings persisted to match_candidates (delete-then-insert, re-runnable). Request status -> 'matched'. VERIFIED on seed data: Jignesh (cycle 0) outranks Suresh (cycle 4) despite Suresh being nearer and better rated — this is the fairness demo moment.
 
 [2026-09-19 20:17][T12][A] POST /api/bookings, GET /api/bookings/mine, GET /api/bookings/:id live. Booking + start_otp + pending payments row created in one transaction; service_request status -> 'booked'. src/services/otp.js (crypto.randomInt, timingSafeEqual, MAX_ATTEMPTS=5) and src/services/payments.js (75/15/10, welfare absorbs remainder) created. OTP VISIBILITY VERIFIED: worker receives null for both OTP fields, household receives the real values.
+
+[2026-09-19 21:09][T19][C] Gemini gemini-2.0-flash wired into src/services/nlp.js behind the existing extractServiceDetails() interface — no other file changed. @google/generative-ai@0.21.0 installed. JSON-only system prompt, responseMimeType application/json, temperature 0.1, 8s hard timeout, output validated against the 6 skill codes / 4 urgency values / 3 languages. ANY failure (disabled, missing key, timeout, bad JSON, invalid value) falls back to keywords with source='fallback'. VERIFIED: LLM_ENABLED=false and an invalid key both still return fallback result — intake cannot fail because of NLP. Set GEMINI_API_KEY and LLM_ENABLED=true in .env to activate the LLM path.
 
 
 ---
