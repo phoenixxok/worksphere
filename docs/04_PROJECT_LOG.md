@@ -227,7 +227,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 |---|---|---|---|---|---|
 | T01 | A | Repo skeleton and Git | ✅ | 6b4c49f | |
 | T02 | A | Neon DB + schema | ✅ | | |
-| T03 | C | Seed data | ⬜ | | |
+| T03 | C | Seed data | ✅ | | |
 | T04 | A | Express + health | ⬜ | | |
 | T05 | B | Vite/React/Tailwind skeleton | ⬜ | | **thin slice done here** |
 | T06 | A | JWT auth | ⬜ | | |
@@ -269,6 +269,7 @@ Newest at the bottom. Append after every completed task — never edit an old en
 
 [2026-09-19 16:51][T02][A] Neon Postgres project 'worksphere' created. schema.sql applied, 8 tables live. backend/.env created locally (not committed), .env.example committed. LLM_ENABLED=false for now.
 
+[T03][C] backend/db/seed.js created and run. 6 skills, 17 users (1 admin, 3 households, 13 workers), 16 worker_skills. All passwords 'test1234'. Seed is idempotent (safe to re-run) — use it to reset before demo rehearsals.
 
 
 ---
