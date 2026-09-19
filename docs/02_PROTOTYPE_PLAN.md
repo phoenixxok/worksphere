@@ -4530,6 +4530,338 @@ One command rebuilds the entire demo dataset, so we can rehearse the full flow r
 # T24 · Feature freeze and rehearsal
 **Owner ALL · Prereqs: T19 (plus whatever else landed) · ~90 min · NEVER CUT**
 
+# WORKSPHERE — POST-T19 CHANGE SET (T25, T26, T27)
+# Slot these in AFTER T19 and BEFORE T24 (feature freeze).
+# Paste 00_EXECUTOR_RULES.md and 01_SHARED_BRIEF.md above this, as usual.
+# Do ONE task per chat. T25 first, then T26, then T27.
+
+---
+
+## BEFORE YOU START ANY OF THESE
+
+Tag the working prototype so you can roll back:
+
+```bash
+git checkout main && git pull
+git tag -a pre-ui-change -m "Working prototype at T19"
+git push origin pre-ui-change
+```
+
+If T26 or T27 goes wrong and time is short: `git checkout pre-ui-change` and present that. These three tasks are polish. A working narrow-screen demo beats a broken wide-screen one.
+
+---
+
+## BRIEF AMENDMENT (applies to 01_SHARED_BRIEF.md — A applies this, nobody else)
+
+**Add one error code to §6:**
+
+| code | HTTP | when |
+|---|---|---|
+| `DUPLICATE_BOOKING` | 409 | the household already has an active booking with this worker for this slot |
+
+**Add one index to §3 (`backend/db/schema.sql`), at the end of the index block:**
+
+```sql
+CREATE UNIQUE INDEX idx_bookings_no_duplicate_active
+  ON bookings (household_user_id, worker_user_id, scheduled_slot)
+  WHERE status IN ('pending','accepted','in_progress');
+```
+
+Nothing else in 01 changes. No table, column, endpoint or status value is renamed.
+
+---
+---
+
+# T25 · Prevent duplicate bookings for the same worker and slot
+**Owner A · Prereqs: T14 · ~20 min · DO THIS ONE FIRST**
+
+### The bug
+A household books Jignesh for "Today 4-6 PM". They sign out, sign back in, create a fresh request, and book Jignesh for the same slot again. The system accepts it. It should not: the same worker cannot be in two places at once, and the household is double-booking by accident.
+
+The existing `INVALID_STATE` guard only catches re-booking the *same service request*. It does not catch a *new* request for the same worker and slot.
+
+### Goal
+Reject a booking when the household already has an active booking (`pending`, `accepted` or `in_progress`) with the same worker for the same `scheduled_slot`, with a clear message — enforced in both the application code and the database.
+
+### Step 1 — apply the index
+
+Run this in the Neon SQL Editor, and also append it to `backend/db/schema.sql` so a fresh setup gets it:
+
+```sql
+CREATE UNIQUE INDEX idx_bookings_no_duplicate_active
+  ON bookings (household_user_id, worker_user_id, scheduled_slot)
+  WHERE status IN ('pending','accepted','in_progress');
+```
+
+This is a **partial unique index**: it only applies to rows whose status is one of those three, so cancelled and completed bookings never block a re-book. It is the database-level guarantee — even a bug in the route cannot create a duplicate.
+
+### Step 2 — edit `worksphere/backend/src/routes/bookings.js`
+
+In the `POST /` handler, insert this block **after** the worker-exists check and **immediately before** `await client.query('BEGIN');`:
+
+```js
+    // Duplicate guard: the same household cannot hold two active bookings with
+    // the same worker for the same slot, even across different service requests.
+    const duplicate = await client.query(
+      `SELECT id FROM bookings
+       WHERE household_user_id = $1
+         AND worker_user_id = $2
+         AND scheduled_slot = $3
+         AND status IN ('pending','accepted','in_progress')
+       LIMIT 1`,
+      [req.auth.user_id, worker_user_id, scheduled_slot]
+    );
+    if (duplicate.rowCount > 0) {
+      return fail(res, 409, 'DUPLICATE_BOOKING',
+        `You already have an active booking with this worker for ${scheduled_slot} (booking #${duplicate.rows[0].id}). Cancel it first or choose another slot.`);
+    }
+```
+
+Then, in the same handler's `catch (err)` block, add the database-level fallback **before** `next(err);`:
+
+```js
+    // 23505 = unique_violation. Two requests racing each other both passed the
+    // check above; the index caught the second one.
+    if (err.code === '23505' && String(err.constraint || '').includes('no_duplicate_active')) {
+      return fail(res, 409, 'DUPLICATE_BOOKING',
+        'You already have an active booking with this worker for that slot.');
+    }
+```
+
+Leave every other line of the file unchanged.
+
+### Step 3 — edit `worksphere/frontend/src/pages/BookingFormPage.jsx`
+
+This is a one-line change inside `confirm()`. Replace:
+
+```js
+      setError(err.message);
+```
+
+with:
+
+```js
+      setError(err.code === 'DUPLICATE_BOOKING'
+        ? `${err.message} You can see it under My bookings.`
+        : err.message);
+```
+
+### Verification checklist
+
+1. Log in as Ramesh. Create a plumbing request, book **Jignesh** for **Today 4-6 PM**. → 201, booking created.
+2. **Sign out. Sign back in as Ramesh.** Create a *new* plumbing request. Book **Jignesh** for **Today 4-6 PM** again.
+   → red box: "You already have an active booking with this worker for Today 4-6 PM (booking #1). Cancel it first or choose another slot. You can see it under My bookings."
+   **This is the bug being fixed. It must fail here.**
+3. Same fresh request, but pick **Today 6-8 PM** → 201, booking succeeds. (Different slot is allowed.)
+4. Same fresh request, same slot, but pick **Bhavna Chauhan** → 201, succeeds. (Different worker is allowed.)
+5. Cancel booking #1 from `/household/bookings`. Now re-book Jignesh for Today 4-6 PM → 201, succeeds. (Cancelled does not block.)
+6. Complete a booking with Jignesh for a slot, then book him again for that same slot → 201, succeeds. (Completed does not block.)
+7. Log in as **Meera** (`9876500002`), book Jignesh for Today 4-6 PM while Ramesh has an active one → 201, succeeds. (The guard is per household, not global.)
+8. Confirm the index exists:
+```sql
+   SELECT indexname FROM pg_indexes
+   WHERE tablename = 'bookings' AND indexname = 'idx_bookings_no_duplicate_active';
+```
+   → 1 row.
+
+### Done when
+Check 2 is rejected and checks 3, 4, 5, 6 and 7 all still succeed. **If any of 3–7 is blocked, the guard is too broad — re-read the WHERE clause.**
+
+### Common errors
+- **`could not create unique index ... duplicate key value`** → you already have duplicate active bookings in the database from testing. Run `npm run demo:reset`, then create the index.
+- **Checks 5 or 6 are blocked** → your status list includes `cancelled` or `completed`. It must be exactly the three active statuses.
+- **Check 7 is blocked** → you left `household_user_id` out of the index or the WHERE clause.
+- **`err.constraint` is undefined** → some pg errors omit it; the `String(err.constraint || '')` guard handles that safely. Keep it.
+
+### What you should be able to explain
+We enforce this in two places on purpose. The route check gives the user a clear, specific message naming the existing booking. The partial unique index is the actual guarantee — it only covers active bookings, so cancelled and completed ones never block a re-book, and it holds even if two requests arrive at the same instant. That is the difference between a validation and a constraint.
+
+### Git commit
+`fix(api): reject duplicate active bookings for the same worker and slot`
+
+### Log entry
+```text
+[T25][A] Duplicate booking guard added. Route check in POST /api/bookings returns 409 DUPLICATE_BOOKING naming the existing booking id; partial unique index idx_bookings_no_duplicate_active on (household_user_id, worker_user_id, scheduled_slot) WHERE status IN (pending, accepted, in_progress) is the database-level guarantee. 23505 handled as a race fallback. BRIEF AMENDED: new error code DUPLICATE_BOOKING in 01 section 6, new index in section 3. Cancelled and completed bookings correctly do not block re-booking.
+```
+
+---
+---
+
+# T26 · Desktop 16:9 layout
+**Owner B · Prereqs: T18 · ~20 min**
+
+### Goal
+Replace the phone-width column with a desktop layout that fills a standard 16:9 screen, without rewriting any page's logic. Only `App.jsx` and `AppHeader.jsx` change structurally; pages get width classes only.
+
+### Design decision — read before building
+Do **not** stretch the existing single column to full width; long lines of text across 1920px are unreadable. Use a **fixed left sidebar for navigation plus a centred content area with a max width**. This is the standard desktop dashboard shape, it looks deliberate, and it makes the admin dashboard genuinely better because three panels can sit side by side.
+
+### Step 1 — replace `worksphere/frontend/src/App.jsx` shell
+
+Keep every `<Route>` line exactly as it is. Replace only the wrapper `<div>`s:
+
+```jsx
+        <div className="min-h-screen flex justify-center">
+          <div className="w-full max-w-md bg-slate-50 min-h-screen shadow-xl">
+            <AppHeader />
+            <Routes> ... </Routes>
+          </div>
+        </div>
+```
+
+with:
+
+```jsx
+        <div className="min-h-screen bg-slate-100">
+          <AppHeader />
+          <main className="mx-auto w-full max-w-6xl px-6 py-6">
+            <Routes> ... </Routes>
+          </main>
+        </div>
+```
+
+`max-w-6xl` (1152px) centred on a 1920px screen reads well and still fills a projector properly. Do not remove it.
+
+### Step 2 — `worksphere/frontend/src/components/AppHeader.jsx`
+
+Turn the header into a full-width top bar with the content constrained to the same `max-w-6xl`, so the header text lines up with the page content below it. Keep the sign-out button and the `{user.full_name} · {user.role}` line exactly as they are — just move them inside a `<div className="mx-auto w-full max-w-6xl px-6 flex items-center justify-between">`.
+
+Add a role label on the right of the header so the audience can always tell which window they are looking at during the demo: a `Badge` reading `HOUSEHOLD`, `WORKER` or `CO-OP ADMIN` in the role's colour. This is worth more on stage than anything else in this task.
+
+### Step 3 — per-page width rules
+
+Change **only** the outermost `<div className="p-4 space-y-4">` on each page. Do not touch any component inside.
+
+| Page | New outer class | Reason |
+|---|---|---|
+| `LoginPage.jsx` | `max-w-md mx-auto space-y-5 pt-12` | A login form should stay narrow and centred |
+| `HouseholdHome.jsx` | `max-w-2xl mx-auto space-y-4` | Text entry, keep the line length readable |
+| `MatchesPage.jsx` | `space-y-4` + wrap the cards in `grid grid-cols-1 md:grid-cols-2 gap-4` | Four worker cards in two columns — all visible at once, no scrolling during the demo |
+| `BookingFormPage.jsx` | `max-w-2xl mx-auto space-y-4` | Form, keep narrow |
+| `HouseholdBookings.jsx` | `max-w-3xl mx-auto space-y-4` | Cards with an OTP box beside them |
+| `WorkerHome.jsx` | `max-w-3xl mx-auto space-y-4` | Job cards |
+| `AdminDashboard.jsx` | `space-y-6` + see below | Full width, this is a dashboard |
+
+**`AdminDashboard.jsx` specifically:** keep the four `StatTile`s in one row (`grid-cols-4`, they are currently `grid-cols-2`), then put "Where the money went", "Demand by service" and "Rotation queue" into a `grid grid-cols-1 lg:grid-cols-3 gap-4` so all three are visible without scrolling, with "All bookings" full width underneath. **Getting the whole dashboard on one screen is the point of this task** — during the demo you must not scroll while judges watch it update.
+
+### Step 4 — keep it responsive
+Every `md:` and `lg:` prefix above means the layout still collapses to one column on a narrow window. Do not remove them. If the projector turns out to be 4:3 or the venue gives you a small window, the app still works.
+
+### Verification checklist
+1. Open at 1920×1080 → no horizontal scrollbar anywhere, content centred, no giant empty gutters.
+2. `/login` → the form is narrow and centred, not stretched across the screen.
+3. Matches page → four worker cards in **two columns**, all four visible without scrolling.
+4. `/admin` → four stat tiles in one row, three panels side by side below, all bookings underneath. **Everything above "All bookings" fits on one screen.**
+5. Header → shows the role badge, and the header text lines up vertically with the page content below it.
+6. Narrow the window to phone width → everything collapses to one column and remains usable.
+7. Run the **entire demo flow** (`05_DEMO_AND_QA.md` section A) once at 1920×1080. Every click path still works.
+8. `git diff --stat` → only `App.jsx`, `AppHeader.jsx` and the outer div of each page changed. **If any component file changed, you went too far.**
+
+### Done when
+Checks 4, 7 and 8 all pass.
+
+### Common errors
+- **Horizontal scrollbar appears** → a child has a fixed width or `w-screen`. Find it with DevTools; `max-w-full` on the offender fixes it.
+- **Admin dashboard still stacked** → Tailwind needs the literal class string; `lg:grid-cols-3` must be written out, never built from a variable.
+- **Cards became different heights and look ragged** → add `items-start` to the grid container.
+- **Pages look empty and lost** → your `max-w-*` is too large for that page. Use the table above; do not go wider.
+
+### What you should be able to explain
+The prototype was built phone-width because the production design is a React Native mobile app, but we present on a projector, so we moved to a centred desktop layout with a maximum content width. Nothing about the pages themselves changed — only the container — because all the layout lives in the shell. The breakpoints are still there, so the same build works on a phone, which we can show on the deployed URL.
+
+### Git commit
+`style(web): desktop 16:9 layout with centred max-width shell`
+
+### Log entry
+```text
+[T26][B] Layout moved from max-w-md phone column to a centred max-w-6xl desktop shell in App.jsx, with a full-width top bar in AppHeader showing a role badge (HOUSEHOLD / WORKER / CO-OP ADMIN) for demo clarity. Per-page max widths applied to outer divs only: login max-w-md, household/booking max-w-2xl, bookings/worker max-w-3xl, matches 2-column grid, admin full width with 4 stat tiles in one row and 3 panels side by side. All md:/lg: breakpoints retained so it still collapses to mobile. No component internals touched. Full demo flow re-verified at 1920x1080.
+```
+
+---
+---
+
+# T27 · UI polish — simple, sober, readable
+**Owner B · Prereqs: T26 · ~20 min · BELOW THE CUT LINE**
+
+### Goal
+Tighten the visual language so it reads as considered rather than default, without adding a library, a font file, or any new dependency.
+
+### Constraints — do not break these
+- **No new packages.** Tailwind classes only.
+- **No new colours beyond the palette below.** Resist the urge to add gradients, shadows-on-everything, or a brand colour.
+- **Do not change any text content, label, or number.** This is presentation only.
+- **Do not touch any logic, state, API call, or conditional render.** If a diff line contains `useState`, `useEffect`, `api.` or `await`, you have gone too far.
+
+### The palette — use only these
+| Use | Class |
+|---|---|
+| Page background | `bg-slate-100` |
+| Card surface | `bg-white` |
+| Card border | `border border-slate-200` (replace `shadow` with this — flat reads more professional than drop shadows) |
+| Primary text | `text-slate-900` |
+| Secondary text | `text-slate-500` |
+| Primary action | `bg-slate-900 text-white` |
+| Positive / money to worker | `text-green-700`, `bg-green-50` |
+| Warning / OTP | `text-amber-800`, `bg-amber-50` |
+| Welfare fund | `text-purple-700` |
+| Danger / cancel | `text-red-700`, `bg-red-50` |
+
+### Specific changes
+
+1. **Cards** — replace every `rounded-lg shadow p-4` with `rounded-xl border border-slate-200 p-5`. Consistent corner radius and no shadows.
+2. **Section headings** — every card's title becomes `text-sm font-semibold text-slate-900 uppercase tracking-wide`. Small caps headings look deliberate and stop the page reading as one flat block.
+3. **Numbers** — every rupee figure, score and OTP gets `tabular-nums`. Without it, digits jitter as the dashboard polls, which looks broken. **This is the highest-value line in this task.**
+4. **Vertical rhythm** — page-level spacing `space-y-6`, inside a card `space-y-3`. Nothing else.
+5. **Buttons** (`Button.jsx`) — add `text-sm` and `focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2`. The focus ring is accessibility, not decoration.
+6. **Status badges** (`Badge.jsx`) — add `uppercase tracking-wide text-[11px]` so all badges are visually consistent regardless of label length.
+7. **Score bars** (`ScoreBar.jsx`) — bump the track to `h-2`, add `transition-all duration-300` on the fill so it animates in when "Why this rank?" opens. One subtle motion, nowhere else.
+8. **Tables of figures** (`SplitCard`, admin money panel) — label left in `text-slate-500`, figure right in `font-semibold tabular-nums`, one `border-t border-slate-200 pt-2` above the total row only.
+9. **Empty and loading states** — `text-slate-400 text-sm`, centred, `py-8`. They should recede, not compete.
+10. **Accessibility pass** — every `<input>` gets an `aria-label` matching its placeholder; every icon-only button (the mic in `VoiceInput`, if T20 shipped) gets an `aria-label`; confirm no text sits below `text-xs`.
+
+### Verification checklist
+1. Every card on every screen has the same corner radius and border. No drop shadows anywhere.
+2. Leave `/admin` open for 60 seconds while it polls → **the numbers do not shift horizontally.** (That is `tabular-nums` working.)
+3. Tab through `/login` with the keyboard → every button and input shows a visible focus ring, in a sensible order.
+4. Open "Why this rank?" → the three bars animate in over ~300ms.
+5. Zoom the browser to 150% → nothing overlaps, nothing is cut off.
+6. Check the amber OTP box still reads clearly and the "Prototype: shown on screen" label is **still visible**. Do not let polish hide an honesty label.
+7. Run the full demo flow once more. Every click path unchanged.
+8. `git diff` → no line containing `useState`, `useEffect`, `api.`, `await`, or any changed string literal. **Only `className` values changed.**
+
+### Done when
+Checks 2, 6 and 8 all pass. Check 8 is the important one.
+
+### Common errors
+- **A page breaks after the edit** → you changed JSX structure, not just classes. `git checkout -- <file>` and redo with classes only.
+- **Numbers still jitter** → `tabular-nums` is on the container, not on the element holding the digits. It must be on the element itself.
+- **Focus rings invisible** → another rule has `outline-none` without a replacement ring. Both classes must be present.
+- **It now looks worse** → you added something not in the palette. Remove it. Restraint is the whole task.
+
+### What you should be able to explain
+We kept the interface deliberately plain: one neutral palette, flat bordered cards, no shadows and no brand colour, because the content is the point. Numbers use tabular figures so the live dashboard does not jitter as it polls, which is a small detail that makes a live demo look stable rather than broken. Every input has a label and every control has a visible focus ring, so the app is usable by keyboard and by a screen reader.
+
+### Git commit
+`style(web): consistent card, typography and accessibility pass`
+
+### Log entry
+```text
+[T27][B] UI polish. Flat bordered cards (rounded-xl border-slate-200, shadows removed), uppercase tracking-wide section headings, tabular-nums on every figure so polling does not shift digits, consistent space-y-6 page / space-y-3 card rhythm, focus rings on all buttons and inputs, aria-labels on inputs and icon-only buttons, 300ms transition on the score bars. Palette limited to slate + green/amber/purple/red accents, no new packages, no logic touched. Honesty labels on the OTP box verified still visible. Full demo flow re-verified.
+```
+
+---
+---
+
+## ORDER AND TIMING
+
+| Task | Owner | Do it | If short on time |
+|---|---|---|---|
+| T25 | A | **First.** It is a real bug and the fix is contained. | Never cut — a judge could find this. |
+| T26 | B | Second. Test the full flow after it. | Cut if under 2 hours to freeze. Narrow layout demos fine. |
+| T27 | C or B | Last. | Cut freely. It is cosmetic. |
+
+After all three: **re-run the full verification of T18 and T19**, then `npm run demo:reset`, then go to T24 (freeze and rehearsal). Do not skip re-testing the flow — T26 touches every page.
+
 ### Goal
 Stop building, verify the whole flow on the machine you will actually present from, and rehearse until the demo is boring.
 
