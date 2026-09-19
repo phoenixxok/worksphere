@@ -23,7 +23,7 @@ export default function BookingFormPage() {
 
   if (!candidate) {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
+      <div className="max-w-2xl mx-auto space-y-6">
         <p className="text-slate-600">No worker selected.</p>
         <Button variant="secondary" onClick={() => navigate(`/household/requests/${id}/matches`)}>
           Back to matches
@@ -49,10 +49,10 @@ export default function BookingFormPage() {
 
   if (booking) {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
-        <div className="bg-green-50 border border-green-300 rounded-lg p-4">
-          <p className="font-bold text-green-900">Booking confirmed</p>
-          <p className="text-sm text-green-800">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="bg-green-50 border border-green-300 rounded-xl p-5">
+          <p className="text-lg font-bold text-green-900">Booking confirmed</p>
+          <p className="text-base text-green-800 mt-1">
             {booking.worker_name} · {booking.scheduled_slot} · {rupees(booking.quoted_amount_inr)}
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function BookingFormPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <div className="max-w-2xl mx-auto space-y-6">
       <div>
         <h2 className="text-lg font-bold">Confirm booking</h2>
         <p className="text-sm text-slate-500">
@@ -103,14 +103,14 @@ export default function BookingFormPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4 text-sm space-y-1">
-        <p className="font-semibold">How {rupees(amount)} will be split</p>
-        <div className="flex justify-between"><span className="text-slate-500">Worker payout (75%)</span>
-          <span className="font-semibold">{rupees(Math.floor(amount * 0.75))}</span></div>
-        <div className="flex justify-between"><span className="text-slate-500">Co-op overhead (15%)</span>
-          <span className="font-semibold">{rupees(Math.floor(amount * 0.15))}</span></div>
-        <div className="flex justify-between"><span className="text-slate-500">Welfare fund (10%)</span>
-          <span className="font-semibold">
+      <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+        <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">How <span className="tabular-nums">{rupees(amount)}</span> will be split</p>
+        <div className="flex justify-between text-sm"><span className="text-slate-500">Worker payout (75%)</span>
+          <span className="font-semibold tabular-nums text-slate-900">{rupees(Math.floor(amount * 0.75))}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-slate-500">Co-op overhead (15%)</span>
+          <span className="font-semibold tabular-nums text-slate-900">{rupees(Math.floor(amount * 0.15))}</span></div>
+        <div className="flex justify-between text-sm border-t border-slate-200 pt-2"><span className="text-slate-500">Welfare fund (10%)</span>
+          <span className="font-semibold tabular-nums text-purple-700">
             {rupees(amount - Math.floor(amount * 0.75) - Math.floor(amount * 0.15))}</span></div>
       </div>
 

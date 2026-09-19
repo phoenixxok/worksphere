@@ -17,12 +17,13 @@ export default function OtpInput({ title, hint, onSubmit, busy }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
       <div>
-        <p className="font-semibold">{title}</p>
+        <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">{title}</p>
         {hint && <p className="text-xs text-slate-500">{hint}</p>}
       </div>
       <input
+        aria-label={title}
         inputMode="numeric"
         maxLength={6}
         className="w-full text-center text-2xl font-mono tracking-[0.3em] rounded-lg border border-slate-300 px-3 py-3"

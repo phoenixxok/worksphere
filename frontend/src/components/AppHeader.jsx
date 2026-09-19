@@ -19,13 +19,13 @@ export default function AppHeader() {
             <h1 className="font-bold tracking-wide">WorkSphere</h1>
             {roleBadge}
           </div>
-          <p className="text-xs text-slate-300 mt-1">
+          <p className="text-sm text-slate-300 mt-1">
             {user ? `${user.full_name} · ${user.role}` : 'Cooperative Gig Services'}
           </p>
         </div>
         {user && (
           <button
-            className="text-xs underline text-slate-300 ml-4"
+            className="text-sm underline text-slate-300 ml-4"
             onClick={() => { clearSession(); navigate('/login', { replace: true }); }}>
             Sign out
           </button>

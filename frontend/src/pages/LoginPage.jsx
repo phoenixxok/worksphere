@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-5 pt-12">
+    <div className="max-w-md mx-auto space-y-6 pt-12">
       <div>
         <h2 className="text-lg font-bold">Sign in</h2>
         <p className="text-sm text-slate-500">Use a demo account or enter a phone number.</p>
@@ -44,10 +44,12 @@ export default function LoginPage() {
 
       <div className="border-t border-slate-200 pt-4 space-y-3">
         <input
+          aria-label="Phone number"
           className="w-full rounded-lg border border-slate-300 px-3 py-3"
           placeholder="Phone number" value={phone}
           onChange={(e) => setPhone(e.target.value)} />
         <input
+          aria-label="Password"
           className="w-full rounded-lg border border-slate-300 px-3 py-3"
           placeholder="Password" type="password" value={password}
           onChange={(e) => setPassword(e.target.value)} />

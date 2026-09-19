@@ -33,13 +33,14 @@ export default function HouseholdHome() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <div className="max-w-2xl mx-auto space-y-6">
       <div>
         <h2 className="text-lg font-bold">What do you need help with?</h2>
         <p className="text-sm text-slate-500">Type in English, Hindi or Gujarati.</p>
       </div>
 
       <textarea
+        aria-label="What do you need help with?"
         className="w-full rounded-lg border border-slate-300 px-3 py-3 h-28"
         placeholder="e.g. My kitchen sink is blocked"
         value={text}

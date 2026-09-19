@@ -4,9 +4,9 @@ import { URGENCY_LABEL, URGENCY_CLASS, LANGUAGE_LABEL } from '../lib/formatters'
 export default function RequestResultCard({ request }) {
   if (!request) return null;
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="font-bold">What we understood</h3>
+        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">What we understood</h3>
         <Badge className={URGENCY_CLASS[request.urgency] || URGENCY_CLASS.normal}>
           {URGENCY_LABEL[request.urgency] || request.urgency}
         </Badge>

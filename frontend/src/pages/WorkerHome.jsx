@@ -44,24 +44,24 @@ export default function WorkerHome() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4">
+    <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold">My jobs</h2>
         <button className="text-xs underline text-slate-500" onClick={load}>Refresh</button>
       </div>
 
       <ErrorBox message={error} />
-      {items === null && !error && <p className="text-slate-500">Loading…</p>}
+      {items === null && !error && <p className="text-sm text-slate-400 text-center py-8">Loading…</p>}
       {items && items.length === 0 && (
-        <p className="text-slate-500">No jobs assigned yet.</p>
+        <p className="text-sm text-slate-400 text-center py-8">No jobs assigned yet.</p>
       )}
 
       {items && items.map((b) => (
-        <div key={b.id} className="bg-white rounded-lg shadow p-4 space-y-3">
+        <div key={b.id} className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="font-bold">{b.skill_name} · {rupees(b.quoted_amount_inr)}</p>
-              <p className="text-sm text-slate-600">{b.issue_summary}</p>
+              <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">{b.skill_name} · <span className="tabular-nums">{rupees(b.quoted_amount_inr)}</span></p>
+              <p className="text-sm text-slate-500">{b.issue_summary}</p>
               <p className="text-xs text-slate-500 mt-1">
                 {b.household_name} · {b.household_address_text}
               </p>
@@ -104,11 +104,11 @@ export default function WorkerHome() {
           )}
 
           {b.status === 'completed' && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm">
-              <p className="font-semibold text-green-900">Job complete</p>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-sm">
+              <p className="text-sm font-semibold text-green-900 uppercase tracking-wide mb-1">Job complete</p>
               <p className="text-green-800">
-                Your payout: {rupees(settled[b.id]?.worker_payout_inr
-                  ?? Math.floor(b.quoted_amount_inr * 0.75))} (75%)
+                Your payout: <span className="tabular-nums">{rupees(settled[b.id]?.worker_payout_inr
+                  ?? Math.floor(b.quoted_amount_inr * 0.75))}</span> (75%)
               </p>
             </div>
           )}

@@ -8,7 +8,7 @@ export default function WorkerCard({ candidate, onSelect }) {
   const c = candidate;
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="flex items-center gap-2">

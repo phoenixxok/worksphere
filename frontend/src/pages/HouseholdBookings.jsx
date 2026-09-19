@@ -45,25 +45,25 @@ export default function HouseholdBookings() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4">
+    <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold">My bookings</h2>
         <button className="text-xs underline text-slate-500" onClick={load}>Refresh</button>
       </div>
 
       <ErrorBox message={error} />
-      {items === null && !error && <p className="text-slate-500">Loading…</p>}
-      {items && items.length === 0 && <p className="text-slate-500">No bookings yet.</p>}
+      {items === null && !error && <p className="text-sm text-slate-400 text-center py-8">Loading…</p>}
+      {items && items.length === 0 && <p className="text-sm text-slate-400 text-center py-8">No bookings yet.</p>}
 
       {items && items.map((b) => (
         <div key={b.id} className="space-y-3">
-          <div className="bg-white rounded-lg shadow p-4 space-y-2">
+          <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
             <div className="flex justify-between items-start gap-2">
               <div>
-                <p className="font-bold">{b.skill_name} · {b.worker_name}</p>
-                <p className="text-sm text-slate-600">{b.issue_summary}</p>
-                <p className="text-xs text-slate-500">
-                  {b.scheduled_slot} · {rupees(b.quoted_amount_inr)}
+                <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">{b.skill_name} · {b.worker_name}</p>
+                <p className="text-sm text-slate-500 mt-1">{b.issue_summary}</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {b.scheduled_slot} · <span className="tabular-nums">{rupees(b.quoted_amount_inr)}</span>
                 </p>
               </div>
               <Badge className={BOOKING_STATUS_CLASS[b.status]}>

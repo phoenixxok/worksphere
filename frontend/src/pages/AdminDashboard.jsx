@@ -54,26 +54,26 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {stats && (
           <>
-            <div className="bg-white rounded-lg shadow p-4 space-y-2">
-              <p className="font-bold text-sm">Where the money went</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+              <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Where the money went</p>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Worker payouts</span>
-                <span className="font-semibold">{rupees(stats.total_worker_payout_inr)}</span></div>
+                <span className="text-slate-500">Worker payouts</span>
+                <span className="font-semibold tabular-nums text-slate-900">{rupees(stats.total_worker_payout_inr)}</span></div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Co-op overhead</span>
-                <span className="font-semibold">{rupees(stats.total_coop_overhead_inr)}</span></div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Welfare fund</span>
-                <span className="font-semibold text-purple-700">
+                <span className="text-slate-500">Co-op overhead</span>
+                <span className="font-semibold tabular-nums text-slate-900">{rupees(stats.total_coop_overhead_inr)}</span></div>
+              <div className="flex justify-between text-sm border-t border-slate-200 pt-2">
+                <span className="text-slate-500">Welfare fund</span>
+                <span className="font-semibold tabular-nums text-purple-700">
                   {rupees(stats.total_welfare_fund_inr)}</span></div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-4 space-y-2">
-              <p className="font-bold text-sm">Demand by service</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+              <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Demand by service</p>
               {stats.demand_by_skill.map((d) => (
                 <div key={d.skill_code}>
-                  <div className="flex justify-between text-xs text-slate-600">
-                    <span>{d.skill_name}</span><span>{d.request_count}</span>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>{d.skill_name}</span><span className="tabular-nums">{d.request_count}</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full bg-slate-700"
@@ -85,8 +85,8 @@ export default function AdminDashboard() {
           </>
         )}
 
-        <div className="bg-white rounded-lg shadow p-4 space-y-2">
-          <p className="font-bold text-sm">Rotation queue — next in line first</p>
+        <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+          <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Rotation queue — next in line first</p>
           {queue.slice(0, 8).map((w, i) => (
             <div key={w.worker_user_id}
                  className="flex items-center justify-between text-sm border-b border-slate-100 pb-1">
@@ -104,16 +104,16 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4 space-y-2">
-        <p className="font-bold text-sm">All bookings</p>
-        {bookings.length === 0 && <p className="text-sm text-slate-500">None yet.</p>}
+      <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+        <p className="text-sm font-semibold text-slate-900 uppercase tracking-wide">All bookings</p>
+        {bookings.length === 0 && <p className="text-sm text-slate-400 text-center py-8">None yet.</p>}
         {bookings.slice(0, 10).map((b) => (
           <div key={b.id} className="flex justify-between items-center text-sm border-b border-slate-100 pb-1">
             <span>
               <span className="text-slate-400 text-xs mr-1">#{b.id}</span>
               {b.skill_name} · {b.worker_name}
-              <span className="block text-xs text-slate-400">
-                {b.household_name} · {rupees(b.quoted_amount_inr)}</span>
+              <span className="block text-xs text-slate-500 mt-1">
+                {b.household_name} · <span className="tabular-nums">{rupees(b.quoted_amount_inr)}</span></span>
             </span>
             <Badge className={BOOKING_STATUS_CLASS[b.status]}>
               {BOOKING_STATUS_LABEL[b.status]}

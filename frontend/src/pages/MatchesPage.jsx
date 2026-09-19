@@ -22,7 +22,7 @@ export default function MatchesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <h2 className="text-lg font-bold">Fair-matched workers</h2>
         <p className="text-sm text-slate-500">
@@ -32,12 +32,12 @@ export default function MatchesPage() {
 
       <ErrorBox message={error} />
 
-      {items === null && !error && <p className="text-slate-500">Finding workers…</p>}
+      {items === null && !error && <p className="text-sm text-slate-400 text-center py-8">Finding workers…</p>}
 
       {items && items.length === 0 && (
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="font-semibold">No workers available</p>
-          <p className="text-sm text-slate-500">
+        <div className="text-center py-8 text-sm text-slate-400">
+          <p className="font-semibold text-slate-900 mb-1">No workers available</p>
+          <p>
             No verified, available worker with this skill is within 15 km right now.
           </p>
         </div>
