@@ -2,6 +2,7 @@ const express = require('express');
 const { pool } = require('../db');
 const { requireAuth, requireRole, fail } = require('../middleware/auth');
 const { extractServiceDetails } = require('../services/nlp');
+const { computeMatches } = require('../services/matching');
 
 const router = express.Router();
 
@@ -80,6 +81,51 @@ router.get('/:id', requireAuth, async (req, res, next) => {
     }
     res.json(shape(row));
   } catch (err) { next(err); }
+});
+
+// GET /api/requests/:id/matches  (household owner)
+router.get('/:id/matches', requireAuth, requireRole('household'), async (req, res, next) => {
+  const client = await pool.connect();
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) return fail(res, 400, 'VALIDATION_ERROR', 'id must be a number.');
+
+    const r = await client.query(
+      `SELECT sr.id, sr.household_user_id, sr.skill_id, sr.status,
+              u.latitude  AS household_latitude,
+              u.longitude AS household_longitude
+       FROM service_requests sr
+       JOIN users u ON u.id = sr.household_user_id
+       WHERE sr.id = $1`,
+      [id]
+    );
+    if (r.rowCount === 0) return fail(res, 404, 'NOT_FOUND', 'Service request not found.');
+
+    const sr = r.rows[0];
+    if (sr.household_user_id !== req.auth.user_id) {
+      return fail(res, 403, 'NOT_OWNER', 'This request does not belong to you.');
+    }
+    if (sr.status === 'booked') {
+      return fail(res, 409, 'INVALID_STATE', 'This request is already booked.');
+    }
+
+    await client.query('BEGIN');
+    const items = await computeMatches(client, sr);
+    if (items.length > 0) {
+      await client.query(
+        `UPDATE service_requests SET status = 'matched' WHERE id = $1 AND status <> 'booked'`,
+        [id]
+      );
+    }
+    await client.query('COMMIT');
+
+    return res.json({ service_request_id: id, items });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    next(err);
+  } finally {
+    client.release();
+  }
 });
 
 module.exports = router;
