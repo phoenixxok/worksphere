@@ -33,7 +33,7 @@ export default function HouseholdHome() {
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       <div>
         <h2 className="text-lg font-bold">What do you need help with?</h2>
         <p className="text-sm text-slate-500">Type in English, Hindi or Gujarati.</p>

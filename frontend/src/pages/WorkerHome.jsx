@@ -44,7 +44,7 @@ export default function WorkerHome() {
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="max-w-3xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold">My jobs</h2>
         <button className="text-xs underline text-slate-500" onClick={load}>Refresh</button>

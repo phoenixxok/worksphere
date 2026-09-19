@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="p-4 space-y-5">
+    <div className="max-w-md mx-auto space-y-5 pt-12">
       <div>
         <h2 className="text-lg font-bold">Sign in</h2>
         <p className="text-sm text-slate-500">Use a demo account or enter a phone number.</p>

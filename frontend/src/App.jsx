@@ -17,9 +17,9 @@ function Placeholder({ name }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex justify-center">
-        <div className="w-full max-w-md bg-slate-50 min-h-screen shadow-xl">
-          <AppHeader />
+      <div className="min-h-screen bg-slate-100">
+        <AppHeader />
+        <main className="mx-auto w-full max-w-6xl px-6 py-6">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/health" element={<HealthPage />} />
@@ -40,7 +40,7 @@ export default function App() {
 
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        </div>
+        </main>
       </div>
     </BrowserRouter>
   );

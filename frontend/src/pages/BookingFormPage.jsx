@@ -23,7 +23,7 @@ export default function BookingFormPage() {
 
   if (!candidate) {
     return (
-      <div className="p-4 space-y-3">
+      <div className="max-w-2xl mx-auto space-y-4">
         <p className="text-slate-600">No worker selected.</p>
         <Button variant="secondary" onClick={() => navigate(`/household/requests/${id}/matches`)}>
           Back to matches
@@ -49,7 +49,7 @@ export default function BookingFormPage() {
 
   if (booking) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="max-w-2xl mx-auto space-y-4">
         <div className="bg-green-50 border border-green-300 rounded-lg p-4">
           <p className="font-bold text-green-900">Booking confirmed</p>
           <p className="text-sm text-green-800">
@@ -67,7 +67,7 @@ export default function BookingFormPage() {
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       <div>
         <h2 className="text-lg font-bold">Confirm booking</h2>
         <p className="text-sm text-slate-500">

@@ -22,7 +22,7 @@ export default function MatchesPage() {
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4">
       <div>
         <h2 className="text-lg font-bold">Fair-matched workers</h2>
         <p className="text-sm text-slate-500">
@@ -43,9 +43,13 @@ export default function MatchesPage() {
         </div>
       )}
 
-      {items && items.map((c) => (
-        <WorkerCard key={c.worker_user_id} candidate={c} onSelect={onSelect} />
-      ))}
+      {items && items.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {items.map((c) => (
+            <WorkerCard key={c.worker_user_id} candidate={c} onSelect={onSelect} />
+          ))}
+        </div>
+      )}
 
       <button className="w-full text-sm text-slate-500 underline pt-2"
               onClick={() => navigate('/household')}>
