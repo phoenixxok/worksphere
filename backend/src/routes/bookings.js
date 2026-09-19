@@ -67,6 +67,22 @@ router.post('/', requireAuth, requireRole('household'), async (req, res, next) =
     );
     if (worker.rowCount === 0) return fail(res, 404, 'NOT_FOUND', 'Worker not found.');
 
+    // Duplicate guard: the same household cannot hold two active bookings with
+    // the same worker for the same slot, even across different service requests.
+    const duplicate = await client.query(
+      `SELECT id FROM bookings
+       WHERE household_user_id = $1
+         AND worker_user_id = $2
+         AND scheduled_slot = $3
+         AND status IN ('pending','accepted','in_progress')
+       LIMIT 1`,
+      [req.auth.user_id, worker_user_id, scheduled_slot]
+    );
+    if (duplicate.rowCount > 0) {
+      return fail(res, 409, 'DUPLICATE_BOOKING',
+        `You already have an active booking with this worker for ${scheduled_slot} (booking #${duplicate.rows[0].id}). Cancel it first or choose another slot.`);
+    }
+
     await client.query('BEGIN');
 
     const inserted = await client.query(
@@ -96,6 +112,12 @@ router.post('/', requireAuth, requireRole('household'), async (req, res, next) =
     return res.status(201).json(shapeBooking(full.rows[0], 'household'));
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
+    // 23505 = unique_violation. Two requests racing each other both passed the
+    // check above; the index caught the second one.
+    if (err.code === '23505' && String(err.constraint || '').includes('no_duplicate_active')) {
+      return fail(res, 409, 'DUPLICATE_BOOKING',
+        'You already have an active booking with this worker for that slot.');
+    }
     next(err);
   } finally {
     client.release();

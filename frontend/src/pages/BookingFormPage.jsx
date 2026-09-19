@@ -39,7 +39,9 @@ export default function BookingFormPage() {
       const created = await api.createBooking(Number(id), candidate.worker_user_id, slot, amount);
       setBooking(created);
     } catch (err) {
-      setError(err.message);
+      setError(err.code === 'DUPLICATE_BOOKING'
+        ? `${err.message} You can see it under My bookings.`
+        : err.message);
     } finally {
       setBusy(false);
     }
