@@ -227,8 +227,8 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 |---|---|---|---|---|---|
 | T01 | A | Repo skeleton and Git | ✅ | 6b4c49f | |
 | T02 | A | Neon DB + schema | ✅ | 90e55bd | |
-| T03 | C | Seed data | ✅ | 8f81029 | |
-| T04 | A | Express + health | ⬜ | | |
+| T03 | C | Seed data | ✅ | 8cf5566 | |
+| T04 | A | Express + health | ✅ | 1044b82 | |
 | T05 | B | Vite/React/Tailwind skeleton | ⬜ | | **thin slice done here** |
 | T06 | A | JWT auth | ⬜ | | |
 | T07 | B | Login + role routing | ⬜ | | |
@@ -270,6 +270,8 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 16:51][T02][A] Neon Postgres project 'worksphere' created. schema.sql applied, 8 tables live. backend/.env created locally (not committed), .env.example committed. LLM_ENABLED=false for now.
 
 [T03][C] backend/db/seed.js created and run. 6 skills, 17 users (1 admin, 3 households, 13 workers), 16 worker_skills. All passwords 'test1234'. Seed is idempotent (safe to re-run) — use it to reset before demo rehearsals.
+
+[2026-09-19 17:30][T04][A] Backend runs on :4000. src/index.js, src/db.js created. GET /api/health returns {"status":"ok","db":"connected"}. CORS driven by CORS_ORIGIN env var. Global 404 and 500 handlers use the standard error shape.
 
 
 ---
