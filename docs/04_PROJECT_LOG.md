@@ -242,7 +242,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T15 | B | Worker screens | ✅ | eedb659 | |
 | T16 | B | Household bookings | ✅ | 087f2c9 | |
 | T17 | A | Admin endpoints | ✅ | 6e67fdc | |
-| T18 | B | Admin dashboard | ⬜ | | **core complete here** |
+| T18 | B | Admin dashboard | ✅ | 21166bd | **core complete here** |
 | T19 | C+A | Gemini LLM | ✅ | 6ebc930 | `@google/generative-ai@0.21.0` |
 | — | | **✂ CUT LINE** | | | below = optional |
 | T20 | B | Voice input | ⬜ | | |
@@ -301,6 +301,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 
 [2026-09-20 00:24][T16][B] /household/bookings live. 5-second polling of GET /bookings/mine. Status-driven OTP display: start OTP while pending/accepted, completion OTP while in_progress, SplitCard (stacked bar + 3 rows + total) once completed via GET /bookings/:id/payment. Cancel button on pending/accepted only. Two-window demo flow (normal + incognito) now works end to end.
 
+[2026-09-20 01:08][T18][B] /admin live. Polls stats + rotation-queue + bookings every 5s with a "Live · time" stamp. Shows 4 KPI tiles, the three-bucket money breakdown, demand-by-skill bars, the top 8 of the rotation queue, and the 10 most recent bookings with status badges. VERIFIED hands-off: creating/booking/completing in other windows updates this screen within 5 seconds and moves the completed worker down the queue.
+
+*** PROTOTYPE CORE COMPLETE — the 7-step flow is demonstrable end to end. ***
 
 
 
