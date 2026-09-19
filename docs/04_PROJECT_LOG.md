@@ -236,7 +236,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T09 | B | Household intake screen | ⬜ | | |
 | T10 | A | Fair-matching engine | ✅ | 58d312c | ⚠ highest value |
 | T11 | B | Matches + score breakdown | ⬜ | | |
-| T12 | A | Booking + start OTP | ⬜ | | |
+| T12 | A | Booking + start OTP | ✅ | a345924 | |
 | T13 | B | Booking form | ⬜ | | |
 | T14 | A | Lifecycle + settlement | ⬜ | | ⚠ critical transaction |
 | T15 | B | Worker screens | ⬜ | | |
@@ -280,6 +280,9 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-19 18:27][T08][A] GET /api/skills, POST /api/requests, GET /api/requests/mine, GET /api/requests/:id live. src/services/nlp.js implements the keyword fallback (en/hi/gu) behind extractServiceDetails(); nlp_source='fallback', confidence 0.40. LLM branch still to be added in T19. Route order: /mine declared before /:id.
 
 [2026-09-19 19:32][T10][A] GET /api/requests/:id/matches live. src/services/matching.js: Haversine distance, 15km cap, eligibility filter (role=worker, verified, available, has skill), scores proximity 0.45 / skill 0.30 / rotation 0.25, tie-break last_assigned_at then id, top 5. Rankings persisted to match_candidates (delete-then-insert, re-runnable). Request status -> 'matched'. VERIFIED on seed data: Jignesh (cycle 0) outranks Suresh (cycle 4) despite Suresh being nearer and better rated — this is the fairness demo moment.
+
+[2026-09-19 20:17][T12][A] POST /api/bookings, GET /api/bookings/mine, GET /api/bookings/:id live. Booking + start_otp + pending payments row created in one transaction; service_request status -> 'booked'. src/services/otp.js (crypto.randomInt, timingSafeEqual, MAX_ATTEMPTS=5) and src/services/payments.js (75/15/10, welfare absorbs remainder) created. OTP VISIBILITY VERIFIED: worker receives null for both OTP fields, household receives the real values.
+
 
 ---
 
