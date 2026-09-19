@@ -229,7 +229,7 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T02 | A | Neon DB + schema | ✅ | 90e55bd | |
 | T03 | C | Seed data | ✅ | 8cf5566 | |
 | T04 | A | Express + health | ✅ | 1044b82 | |
-| T05 | B | Vite/React/Tailwind skeleton | ⬜ | | **thin slice done here** |
+| T05 | B | Vite/React/Tailwind skeleton | ✅ | bb4922e | **thin slice done here** |
 | T06 | A | JWT auth | ⬜ | | |
 | T07 | B | Login + role routing | ⬜ | | |
 | T08 | A | Request intake + fallback NLP | ⬜ | | |
@@ -273,6 +273,7 @@ Newest at the bottom. Append after every completed task — never edit an old en
 
 [2026-09-19 17:30][T04][A] Backend runs on :4000. src/index.js, src/db.js created. GET /api/health returns {"status":"ok","db":"connected"}. CORS driven by CORS_ORIGIN env var. Global 404 and 500 handlers use the standard error shape.
 
+[2026-09-19 17:50][T05][B] Frontend runs on :5173. Vite 5.4.8 + React 18.3.1 + Tailwind 3.4.13 + react-router-dom 6.26.2. src/lib/api.js holds fetch wrapper, token storage and the standard error unwrapping. /health screen proves browser -> backend -> Neon end to end. THIN SLICE COMPLETE.
 
 ---
 
