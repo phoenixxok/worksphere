@@ -67,4 +67,5 @@ export const api = {
     apiRequest('/requests', { method: 'POST', body: { raw_text, input_mode } }),
   myRequests: () => apiRequest('/requests/mine'),
   getRequest: (id) => apiRequest(`/requests/${id}`),
+  getMatches: (requestId) => apiRequest(`/requests/${requestId}/matches`),
 };
