@@ -38,6 +38,11 @@ app.get('/api/health', async (_req, res) => {
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const skillsRoutes = require('./routes/skills');
+const requestRoutes = require('./routes/requests');
+app.use('/api/skills', skillsRoutes);
+app.use('/api/requests', requestRoutes);
+
 // 404 for any unknown /api route, in the standard error shape from 01 section 6.
 app.use('/api', (_req, res) => {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Endpoint not found.' } });
