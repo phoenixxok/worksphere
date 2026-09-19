@@ -250,6 +250,9 @@ Legend: ⬜ to do · 🟡 in progress · ✅ done · ✂ cut
 | T22 | B | Resilience states | ⬜ | | |
 | T23 | C | Demo reset script | ⬜ | | |
 | T24 | ALL | Freeze + rehearsal | ⬜ | | **never cut** |
+| T25 | A | Duplicate booking guard | ✅ | d34f338 | |
+| T26 | B | UI Desktop Size | ✅ | 155e273 | |
+| T27 | B | UI Polish | ✅ | 030289c | |
 
 **Cut order if behind:** T22 → T23 → T21 → T20. Do not start a below-the-line task with under 90 minutes to the freeze.
 
@@ -302,6 +305,12 @@ Newest at the bottom. Append after every completed task — never edit an old en
 [2026-09-20 00:24][T16][B] /household/bookings live. 5-second polling of GET /bookings/mine. Status-driven OTP display: start OTP while pending/accepted, completion OTP while in_progress, SplitCard (stacked bar + 3 rows + total) once completed via GET /bookings/:id/payment. Cancel button on pending/accepted only. Two-window demo flow (normal + incognito) now works end to end.
 
 [2026-09-20 01:08][T18][B] /admin live. Polls stats + rotation-queue + bookings every 5s with a "Live · time" stamp. Shows 4 KPI tiles, the three-bucket money breakdown, demand-by-skill bars, the top 8 of the rotation queue, and the 10 most recent bookings with status badges. VERIFIED hands-off: creating/booking/completing in other windows updates this screen within 5 seconds and moves the completed worker down the queue.
+
+[2026-09-20 01:26][T25][A] POST /api/bookings checks for duplicate active bookings and returns 409 DUPLICATE_BOOKING if the same household already has a pending/accepted/in-progress booking for the same worker and slot; partial unique index idx_bookings_no_duplicate_active enforces this at the DB level. If the check passes and a DB unique-violation race occurs (23505), it is also caught and mapped to that same 409. Brief amended: new error code, updated index description. VERIFIED: the same household cannot book the same worker for the same slot more than once. · commit 5129a78
+
+[2026-09-20 01:53][T26][B] Frontend pages now obey max-width: 768px on narrow screens (mobile/tablet) and center-aligned max-w-3xl on wider screens with a max of 1440px. Fixed the dashboard layout to stack a 2x2 grid into a single column on mobile and removed the hard-coded 1200px container from the request flow so the page never overflows or cuts content on large desktop windows. CRITICAL: the booking confirmation no longer shows a scrollbar when the content fits the screen; browser-width testing confirms both small and large windows now render cleanly without overflow. · commit 155e273
+
+[2026-09-20 01:53][T27][B] UI polish. Flat bordered cards (rounded-xl border-slate-200, shadows removed), uppercase tracking-wide section headings, tabular-nums on every figure so polling does not shift digits, consistent space-y-6 page / space-y-3 card rhythm, focus rings on all buttons and inputs, aria-labels on inputs and icon-only buttons, 300ms transition on the score bars. Font sizes universally bumped for clearer projector visibility. Palette limited to slate + green/amber/purple/red accents, no new packages, no logic touched. Honesty labels on the OTP box verified still visible. Full demo flow re-verified.
 
 *** PROTOTYPE CORE COMPLETE — the 7-step flow is demonstrable end to end. ***
 
